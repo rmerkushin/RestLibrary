@@ -1,4 +1,4 @@
-# REST library for RobotFramework
+# REST library for Robot Framework
 
 Dependency:
 -----------
