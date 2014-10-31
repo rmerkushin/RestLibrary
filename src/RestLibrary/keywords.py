@@ -17,8 +17,11 @@ class RestKeywords(object):
         self._builtin = BuiltIn()
 
     @staticmethod
-    def convert_to_json(string):
-        return json.loads(string)
+    def convert_to_json(strings):
+        if type(strings) is str:
+            return json.loads(strings)
+        else:
+            return map(lambda s: json.loads(s), strings)
 
     @staticmethod
     def convert_to_multipart_encoded_files(files):
@@ -51,25 +54,37 @@ class RestKeywords(object):
         logger.info("Sending GET request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
         resp = session.get(url, params=params, headers=headers, cookies=cookies, timeout=timeout)
-        return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
+        try:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
+        except ValueError:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
 
     def post(self, alias, url, headers=None, data=None, files=None, cookies=None, timeout=10):
         logger.info("Sending POST request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
         resp = session.post(url, headers=headers, cookies=cookies, data=data, files=files, timeout=timeout)
-        return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
+        try:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
+        except ValueError:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
 
     def put(self, alias, url, headers=None, data=None, cookies=None, timeout=10):
         logger.info("Sending PUT request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
         resp = session.put(url, headers=headers, cookies=cookies, data=data, timeout=timeout)
-        return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
+        try:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
+        except ValueError:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
 
     def delete(self, alias, url, headers=None, data=None, cookies=None, timeout=10):
         logger.info("Sending DELETE request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
         resp = session.delete(url, headers=headers, cookies=cookies, data=data, timeout=timeout)
-        return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
+        try:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
+        except ValueError:
+            return {"status": resp.status_code, "headers": resp.headers, "body": resp.content}
 
     def close_all_sessions(self):
         self._cache.empty_cache()
