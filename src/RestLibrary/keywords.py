@@ -27,10 +27,10 @@ class RestKeywords(object):
 
     @staticmethod
     def convert_to_json(strings, normalize="False"):
-        if type(strings) is str:
-            json_ = json.loads(strings)
-        else:
+        if type(strings) is list:
             json_ = map(lambda s: json.loads(s), strings)
+        else:
+            json_ = json.loads(strings)
         if normalize.upper() == "TRUE":
             if type(json_) is list:
                 json_ = map(lambda x: RestKeywords._normalize(x), json_)
