@@ -77,7 +77,7 @@ class RestKeywords(object):
     def post(self, alias, url, headers=None, data=None, files=None, cookies=None, timeout=10):
         logger.info("Sending POST request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
-        resp = session.post(url, headers=headers, cookies=cookies, data=data, files=files, timeout=timeout)
+        resp = session.post(url, headers=headers, cookies=cookies, data=data.encode("utf-8"), files=files, timeout=timeout)
         try:
             return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
         except ValueError:
@@ -86,7 +86,7 @@ class RestKeywords(object):
     def put(self, alias, url, headers=None, data=None, cookies=None, timeout=10):
         logger.info("Sending PUT request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
-        resp = session.put(url, headers=headers, cookies=cookies, data=data, timeout=timeout)
+        resp = session.put(url, headers=headers, cookies=cookies, data=data.encode("utf-8"), timeout=timeout)
         try:
             return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
         except ValueError:
@@ -95,7 +95,7 @@ class RestKeywords(object):
     def delete(self, alias, url, headers=None, data=None, cookies=None, timeout=10):
         logger.info("Sending DELETE request to: '" + url + "', session: '" + alias + "'")
         session = self._cache.switch(alias)
-        resp = session.delete(url, headers=headers, cookies=cookies, data=data, timeout=timeout)
+        resp = session.delete(url, headers=headers, cookies=cookies, data=data.encode("utf-8"), timeout=timeout)
         try:
             return {"status": resp.status_code, "headers": resp.headers, "body": resp.json()}
         except ValueError:
