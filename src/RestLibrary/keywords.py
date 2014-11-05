@@ -17,11 +17,26 @@ class RestKeywords(object):
         self._builtin = BuiltIn()
 
     @staticmethod
-    def convert_to_json(strings):
-        if type(strings) is str:
-            return json.loads(strings)
+    def _normalize(d):
+        if type(d) is dict:
+            return dict((k, RestKeywords._normalize(v)) for k, v in d.iteritems() if v and RestKeywords._normalize(v))
+        elif type(d) is list:
+            return [RestKeywords._normalize(v) for v in d if v and RestKeywords._normalize(v)]
         else:
-            return map(lambda s: json.loads(s), strings)
+            return d
+
+    @staticmethod
+    def convert_to_json(strings, normalize="False"):
+        if type(strings) is str:
+            json_ = json.loads(strings)
+        else:
+            json_ = map(lambda s: json.loads(s), strings)
+        if normalize.upper() == "TRUE":
+            if type(json_) is list:
+                json_ = map(lambda x: RestKeywords._normalize(x), json_)
+            else:
+                json_ = RestKeywords._normalize(json_)
+        return json_
 
     @staticmethod
     def convert_to_multipart_encoded_files(files):
